@@ -6,6 +6,7 @@ import requests
 import Utils
 import threading
 import random
+import Settings
 
 
 class XiLaDaiLi(threading.Thread):
@@ -35,6 +36,10 @@ class XiLaDaiLi(threading.Thread):
             self.url_queue.put([int(re.search("([0-9]+)", full_url).group(1)), full_url], timeout=5)
         is_continue = True
         while is_continue:
+            proxy_num = Utils.get_proxy_num()
+            if proxy_num >= Settings.POOL_MAX_NUM:
+                time.sleep(random.randint(5, 10))
+                continue
             is_continue = self.__do_crawl()
             time.sleep(random.randint(1, 5))
 
@@ -73,5 +78,5 @@ class XiLaDaiLi(threading.Thread):
             ip_port = re.findall(r"<td>(.*?)</td>", line, re.M | re.I | re.S)[0]
             if ip_port is None:
                 continue
-            msg = Utils.check_and_save2(ip_port)
-            print(self.site_name + "->" + msg)
+            ip_port, message = Utils.check_and_save2(ip_port)
+            print("{:>8s} {:>12s} {:s}".format("[" + self.site_name + "]", ip_port, message))

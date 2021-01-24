@@ -6,6 +6,7 @@ import requests
 import Utils
 import threading
 import random
+import Settings
 
 
 class KuaiDaiLi(threading.Thread):
@@ -34,6 +35,10 @@ class KuaiDaiLi(threading.Thread):
             self.url_queue.put(self.url_prefix + url, block=True, timeout=5)
         is_continue = True
         while is_continue:
+            proxy_num = Utils.get_proxy_num()
+            if proxy_num >= Settings.POOL_MAX_NUM:
+                time.sleep(random.randint(5, 10))
+                continue
             is_continue = self.__do_crawl()
             time.sleep(random.randint(1, 5))
 
@@ -68,5 +73,5 @@ class KuaiDaiLi(threading.Thread):
             port = re.search(r"<td data-title=\"PORT\">(.*?)</td>", line, re.S)
             if ip is None or port is None:
                 continue
-            msg = Utils.check_and_save1(ip.group(1), port.group(1))
-            print(self.site_name + "->" + msg)
+            ip_port, message = Utils.check_and_save1(ip.group(1), port.group(1))
+            print("{:>10s} {:>12s} {:s}".format("["+self.site_name+"]", ip_port, message))

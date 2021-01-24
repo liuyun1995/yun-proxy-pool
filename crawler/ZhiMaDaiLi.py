@@ -4,6 +4,7 @@ import Utils
 import time
 import threading
 import random
+import Settings
 
 class ZhiMaDaiLi((threading.Thread)):
 
@@ -26,6 +27,10 @@ class ZhiMaDaiLi((threading.Thread)):
         page = 1
         total_page = 1
         while page <= total_page:
+            proxy_num = Utils.get_proxy_num()
+            if proxy_num >= Settings.POOL_MAX_NUM:
+                time.sleep(random.randint(5, 10))
+                continue
             data = {"page": page}
             response = requests.post(self.url, headers=self.header, data=data)
             json = response.json()
@@ -46,7 +51,7 @@ class ZhiMaDaiLi((threading.Thread)):
                 columns = re.findall(r"<td>(.*?)</td>", line, re.S)
                 ip = re.search(r"(\d{1,3}\.){3}\d{1,3}", columns[0], re.M | re.I | re.S).group(0)
                 port = columns[1]
-                msg = Utils.check_and_save1(ip, port)
-                print(self.site_name + "->" + msg)
+                ip_port, message = Utils.check_and_save1(ip, port)
+                print("{:>8s} {:>12s} {:s}".format("[" + self.site_name + "]", ip_port, message))
             except Exception:
                 continue

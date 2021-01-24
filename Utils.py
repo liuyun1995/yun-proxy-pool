@@ -4,10 +4,10 @@ import Settings
 
 
 def check_and_save1(ip, port):
-    status, message = _check(ip, port)
+    ip_port, status, message = _check(ip, port)
     if status:
         _save(ip, port)
-    return message
+    return ip_port, message
 
 
 def check_and_save2(ip_port):
@@ -23,9 +23,9 @@ def _check(ip, port):
     proxies = {"http": "http://" + ip_port, "https": "https://" + ip_port}
     try:
         requests.get("http://www.baidu.com", proxies=proxies, timeout=1)
-        return True, "\033[32m[测试成功]\033[0m" + ip_port
+        return ip_port, True, "\033[32m[测试成功]\033[0m"
     except Exception:
-        return False, "\033[31m[测试失败]\033[0m" + ip_port
+        return ip_port, False, "\033[31m[测试失败]\033[0m"
 
 
 def _save(ip, port):
