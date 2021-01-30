@@ -10,10 +10,10 @@ def get_proxy():
         if not files:
             return None
         ip_port = random.choice(files)
-        # files.sort(key=lambda f: os.path.getmtime(os.path.join(Settings.POOL_DIR, f)))
         if check(ip_port):
             break
     return ip_port
+
 
 def check(ip_port):
     proxies = {"http": "http://" + ip_port, "https": "https://" + ip_port}

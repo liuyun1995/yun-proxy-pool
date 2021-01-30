@@ -1,4 +1,4 @@
-from crawler.PoolFlusher import PoolFlusher
+from PoolFlusher import PoolFlusher
 from crawler.JiangXianLi import JiangXianLi
 from crawler.KuaiDaiLi import KuaiDaiLi
 from crawler.XiLaDaiLi import XiLaDaiLi
